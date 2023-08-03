@@ -19,26 +19,16 @@ def is_image_file(filename):
 
 def make_dataset(split='train', data_root=None):
     assert split in ['train', 'eval', 'test']
-    image_1000_root = data_root + '/iron_1000/image/'
-    image_500_root = data_root + '/iron_500/image/'
-    image_1000_list = [image_1000_root + f for f in os.listdir(image_1000_root) if f.endswith('.png')]
-    image_500_list = [image_500_root + f for f in os.listdir(image_500_root) if f.endswith('.png')]
-    if split == 'train':
-        print("Totally {} samples in {} set.".format(len(image_1000_list)+len(image_500_list[0:200]), split))
-    else:
-        print("Totally {} samples in {} set.".format(len(image_500_list[200:]), split))
-    return image_1000_list, image_500_list
+    image_root = data_root + '/' + split + '/image/'
+    image_list = [image_root + f for f in os.listdir(image_root) if f.endswith('.png')]
+    print("Totally {} samples in {} set.".format(len(image_list), split))
+    return image_list
 
 
 class SemData(Dataset):
     def __init__(self, split='train', data_root=None, transform=None):
         self.split = split
-        self.image_1000_list, self.image_500_list = make_dataset(split, data_root)
-        if self.split == 'train':
-            self.data_list = self.image_1000_list + self.image_500_list[0:200]
-        else:
-            self.data_list = self.image_500_list[200:]
-
+        self.data_list = make_dataset(split, data_root)
         self.transform = transform
         self.name = 'Iron'
 
